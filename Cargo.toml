@@ -20,3 +20,17 @@ reqwest = "0.12.7"
 actix-web = "4.9.0"
 tokio = { version = "1.40.0", features = ["macros", "rt-multi-thread"] }
 serde = {version = "1", features = ["derive"]}
+
+# Using table-like toml syntax to avoid a super-long line!
+[dependencies.sqlx]
+version = "0.8.2"
+default-features = false
+features = [
+    "runtime-tokio",          # Use Tokio as the async runtime
+    "tls-rustls-ring",        # Use Rustls with the ring cryptography library
+    "macros",                 # Enable macros like `query!` and `query_as!`
+    "postgres",               # Support for PostgreSQL
+    "uuid",                   # Support for UUIDs
+    "chrono",                 # Support for date and time using the `chrono` crate
+    "migrate"                 # Enable migration support
+]
