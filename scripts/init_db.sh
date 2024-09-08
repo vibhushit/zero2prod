@@ -10,7 +10,7 @@ fi
 if ! [ -x "$(command -v sqlx )" ]; then
     echo >&2 "Error: sqlx is not installed."
     echo >&2 "Use: "
-    echo >&2 " cargo install sqlx-cli -no-default-features -feature postgres"
+    echo >&2 " cargo install sqlx-cli --no-default-features --features postgres"
     echo >&2 "to install it."
     exit 1
 fi
@@ -25,14 +25,14 @@ DB_NAME="${POSTGRES_DB:=newsletter}"
 DB_PORT="${POSTGRES_PORT:=5432}"
 
 
-if [[-z "${SKIP_DOCKER}"]]
+if [[ -z "${SKIP_DOCKER}" ]]
 then
 #Launch postgres using Docker
 docker run \
-    -e POSTGRES_USER=${DB_USER}\
-    -e POSTGRES_PASSWORD=${DB_PASSWORD}\
-    -e POSTGRES_DB=${DB_NAME}\
-    -p "${DB_PORT}":5432\
+    -e POSTGRES_USER=${DB_USER} \
+    -e POSTGRES_PASSWORD=${DB_PASSWORD} \
+    -e POSTGRES_DB=${DB_NAME} \
+    -p "${DB_PORT}":5432 \
     -d postgres \
     postgres -N 1000
     # ^ Increased maximum number of connections for testing purposes
