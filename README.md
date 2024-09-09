@@ -8,3 +8,5 @@
 5. chrono
 6. uuid
 7. config
+8. env_logger
+9. log
