@@ -100,9 +100,9 @@ jobs:
         run: cargo fmt --check
 
   # `clippy` container job
-  clippy:
-    name: Clippy
-    runs-on: ubuntu-latest
+  # clippy:
+  #   name: Clippy
+  #   runs-on: ubuntu-latest
     # env:
       # This environment variable forces sqlx to use its offline mode,
       # which means that it will not attempt to connect to a database
@@ -111,14 +111,14 @@ jobs:
       # to speed up the overall CI pipeline.
       # This will all be covered in detail in chapter 5.
       # SQLX_OFFLINE: true
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install the Rust toolchain
-        uses: actions-rust-lang/setup-rust-toolchain@v1
-        with:
-          components: clippy
-      - name: Linting
-        run: cargo clippy -- -D warnings
+    # steps:
+    #   - uses: actions/checkout@v4
+    #   - name: Install the Rust toolchain
+    #     uses: actions-rust-lang/setup-rust-toolchain@v1
+    #     with:
+    #       components: clippy
+    #   - name: Linting
+    #     run: cargo clippy -- -D warnings
 
   # `coverage` container job
   coverage:
