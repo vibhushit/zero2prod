@@ -6,7 +6,7 @@ pub struct Settings {
     pub application_port: u16,
 }
 
-#[derive(serde::Deserialize)]
+#[derive(serde::Deserialize, Clone)]
 pub struct DatabaseSettings {
     pub username: String,
     pub password: String,
@@ -17,16 +17,15 @@ pub struct DatabaseSettings {
 
 pub fn get_configuration() -> Result<Settings, config::ConfigError> {
     //Initialise our configuration reader
-    let mut settings = config::Config::default();
-
-    //Add configurations values from a file named configurations
-    //It will look for any top-level file with an extension
-    //that `config` kknows how to parse: yaml, json, etc.
-    settings.merge(config::File::with_name("configuration"))?;
-
-    //Try to convert the configuration value it read into
+    let settings = config::Config::builder()
+        //Add configuration values from a file named 'configuration.yam'
+        .add_source(
+            config::File::new("configuration.yaml", config::FileFormat::Yaml)
+        )
+        .build()?;
+    //Try to convert the configuration values it read into 
     //our Settings type
-    settings.try_into()
+    settings.try_deserialize::<Settings>()
 }
 
 impl DatabaseSettings {
