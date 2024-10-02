@@ -3,19 +3,19 @@
 // `tokio::test` is the testing equivalent of `tokio::main`.
 //It also spares you from having to specify the `#[test]` attribute.
 
+use secrecy::ExposeSecret;
 use sqlx::{Connection, Executor, PgConnection, PgPool};
 use std::net::TcpListener;
+use std::sync::LazyLock;
 use uuid::Uuid;
 use zero2prod::configuration::{get_configuration, DatabaseSettings};
-use zero2prod::telemetry::{get_subscriber,init_subscriber};
 use zero2prod::startup::run;
-use std::sync::LazyLock;
-use secrecy::ExposeSecret;
+use zero2prod::telemetry::{get_subscriber, init_subscriber};
 
-static TRACING : LazyLock<()> = LazyLock::new( || {
+static TRACING: LazyLock<()> = LazyLock::new(|| {
     let default_filter_level = "info".to_string();
     let subscriber_name = "test".to_string();
-    
+
     // We cannot assign the output of `get_subscriber` to a variable based on the
     // value TEST_LOG` because the sink is part of the type returned by
     // `get_subscriber`, therefore they are not the same type. We could work around
@@ -23,7 +23,7 @@ static TRACING : LazyLock<()> = LazyLock::new( || {
     if std::env::var("TEST_LOG").is_ok() {
         let subscriber = get_subscriber(subscriber_name, default_filter_level, std::io::stdout);
         init_subscriber(subscriber);
-    }else {
+    } else {
         let subscriber = get_subscriber(subscriber_name, default_filter_level, std::io::sink);
         init_subscriber(subscriber);
     }
@@ -49,8 +49,7 @@ async fn spawn_app() -> TestApp {
     //     .expect("Failed to connect to Postgres");
     let connection_pool = configure_database(&configuration.database).await;
 
-    let server =
-        run(listener, connection_pool.clone()).expect("failed to bind address");
+    let server = run(listener, connection_pool.clone()).expect("failed to bind address");
     let _ = tokio::spawn(server);
     TestApp {
         address,
@@ -60,9 +59,10 @@ async fn spawn_app() -> TestApp {
 
 pub async fn configure_database(config: &DatabaseSettings) -> PgPool {
     // Create database
-    let mut connection = PgConnection::connect(&config.connection_string_without_db().expose_secret())
-        .await
-        .expect("Failed to connect to Postgres");
+    let mut connection =
+        PgConnection::connect(&config.connection_string_without_db().expose_secret())
+            .await
+            .expect("Failed to connect to Postgres");
     connection
         .execute(format!(r#"CREATE DATABASE "{}";"#, config.database_name).as_str())
         .await
